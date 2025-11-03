@@ -1,0 +1,2 @@
+CREATE DATABASE lab_5_db;
+

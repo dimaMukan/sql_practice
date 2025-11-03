@@ -108,7 +108,7 @@ SELECT e.name, e.department, e.salary, e.salary - avg(salary) over () as salary_
 FROM employee e;
 
 SELECT e.name, e.department, e.salary,
-       round(e.salary * 100.0 / avg(e.salary) OVER (),1),
+       round(e.salary * 100.0 / avg(e.salary) OVER (), 1),
        row_number() over (order by e.salary DESC ) as id
 FROM employee e;
 
@@ -134,6 +134,14 @@ FROM (SELECT e.city, avg(e.salary) as total_sal
       GROUP BY e.city) temp
 WHERE temp.total_sal >= (SELECT avg(salary) FROM employee)
 ORDER BY temp.total_sal DESC;
+
+SELECT name
+FROM employee;
+
+SELECT name
+FROM employee;
+SELECT name
+FROM employee;
 
 SELECT name
 FROM employee;

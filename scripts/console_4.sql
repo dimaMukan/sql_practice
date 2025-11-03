@@ -1,108 +1,108 @@
--- -- ========================================
--- -- 1. Создаём таблицу студентов
--- -- ========================================
---
--- DROP TABLE IF EXISTS student_courses; -- сначала many-to-many, чтобы не было зависимостей
--- DROP TABLE IF EXISTS student_profiles; -- потом one-to-one
--- DROP TABLE IF EXISTS courses;         -- потом курсы
--- DROP TABLE IF EXISTS students;        -- наконец студенты
---
--- CREATE TABLE students (
---     id SERIAL PRIMARY KEY, -- уникальный идентификатор студента
---     name VARCHAR(50) NOT NULL,
---     age INT
--- );
---
--- -- ========================================
--- -- 2. Создаём таблицу профилей (One-to-One)
--- -- каждый студент имеет только один профиль
--- -- ========================================
--- CREATE TABLE student_profiles (
---     id SERIAL PRIMARY KEY,
---     student_id INT UNIQUE, -- связь один-к-одному
---     email VARCHAR(100),
---     phone VARCHAR(20),
---     CONSTRAINT fk_student
---         FOREIGN KEY(student_id)
---         REFERENCES students(id)
---         ON DELETE CASCADE
--- );
---
--- -- ========================================
--- -- 3. Создаём таблицу курсов (One-to-Many)
--- -- один курс может быть у нескольких студентов (через таблицу регистрации)
--- -- ========================================
--- CREATE TABLE courses (
---     id SERIAL PRIMARY KEY,
---     course_name VARCHAR(50) NOT NULL
--- );
---
--- -- ========================================
--- -- 4. Таблица регистрации студентов на курсы (Many-to-Many)
--- -- один студент может быть на многих курсах, один курс может иметь много студентов
--- -- ========================================
--- CREATE TABLE student_courses (
---     student_id INT,
---     course_id INT,
---     PRIMARY KEY (student_id, course_id), -- составной ключ
---     CONSTRAINT fk_student
---         FOREIGN KEY(student_id)
---         REFERENCES students(id)
---         ON DELETE CASCADE,
---     CONSTRAINT fk_course
---         FOREIGN KEY(course_id)
---         REFERENCES courses(id)
---         ON DELETE CASCADE
--- );
---
--- -- ========================================
--- -- 5. Вставляем данные
--- -- ========================================
--- INSERT INTO students (name, age) VALUES
--- ('Alice', 21),
--- ('Bob', 22),
--- ('Charlie', 20);
---
--- INSERT INTO student_profiles (student_id, email, phone) VALUES
--- (1, 'alice@example.com', '123-456'),
--- (2, 'bob@example.com', '234-567'),
--- (3, 'charlie@example.com', '345-678');
---
--- INSERT INTO courses (course_name) VALUES
--- ('Math'),
--- ('Physics'),
--- ('Computer Science');
---
--- INSERT INTO student_courses (student_id, course_id) VALUES
--- (1, 1), -- Alice на Math
--- (1, 3), -- Alice на Computer Science
--- (2, 1), -- Bob на Math
--- (2, 2), -- Bob на Physics
--- (3, 2), -- Charlie на Physics
--- (3, 3); -- Charlie на Computer Science
---
--- -- ========================================
--- -- 6. Примеры запросов
--- -- ========================================
---
--- -- Получить всех студентов с их профилями
--- SELECT s.id, s.name, s.age, p.email, p.phone
--- FROM students s
--- LEFT JOIN student_profiles p ON s.id = p.student_id;
---
--- -- Получить список студентов и курсов (Many-to-Many)
--- SELECT s.name AS student, c.course_name AS course
--- FROM students s
--- JOIN student_courses sc ON s.id = sc.student_id
--- JOIN courses c ON sc.course_id = c.id
--- ORDER BY s.id;
---
--- -- Найти всех студентов, которые записаны на курс "Math"
--- SELECT s.name
--- FROM students s
--- JOIN student_courses sc ON s.id = sc.student_id
--- JOIN courses c ON sc.course_id = c.id
--- WHERE c.course_name = 'Math';
+-- ========================================
+-- 1. Создаём таблицу студентов
+-- ========================================
+
+DROP TABLE IF EXISTS student_courses; -- сначала many-to-many, чтобы не было зависимостей
+DROP TABLE IF EXISTS student_profiles; -- потом one-to-one
+DROP TABLE IF EXISTS courses;         -- потом курсы
+DROP TABLE IF EXISTS students;        -- наконец студенты
+
+CREATE TABLE students (
+    id SERIAL PRIMARY KEY, -- уникальный идентификатор студента
+    name VARCHAR(50) NOT NULL,
+    age INT
+);
+
+-- ========================================
+-- 2. Создаём таблицу профилей (One-to-One)
+-- каждый студент имеет только один профиль
+-- ========================================
+CREATE TABLE student_profiles (
+    id SERIAL PRIMARY KEY,
+    student_id INT UNIQUE, -- связь один-к-одному
+    email VARCHAR(100),
+    phone VARCHAR(20),
+    CONSTRAINT fk_student
+        FOREIGN KEY(student_id)
+        REFERENCES students(id)
+        ON DELETE CASCADE
+);
+
+-- ========================================
+-- 3. Создаём таблицу курсов (One-to-Many)
+-- один курс может быть у нескольких студентов (через таблицу регистрации)
+-- ========================================
+CREATE TABLE courses (
+    id SERIAL PRIMARY KEY,
+    course_name VARCHAR(50) NOT NULL
+);
+
+-- ========================================
+-- 4. Таблица регистрации студентов на курсы (Many-to-Many)
+-- один студент может быть на многих курсах, один курс может иметь много студентов
+-- ========================================
+CREATE TABLE student_courses (
+    student_id INT,
+    course_id INT,
+    PRIMARY KEY (student_id, course_id), -- составной ключ
+    CONSTRAINT fk_student
+        FOREIGN KEY(student_id)
+        REFERENCES students(id)
+        ON DELETE CASCADE,
+    CONSTRAINT fk_course
+        FOREIGN KEY(course_id)
+        REFERENCES courses(id)
+        ON DELETE CASCADE
+);
+
+-- ========================================
+-- 5. Вставляем данные
+-- ========================================
+INSERT INTO students (name, age) VALUES
+('Alice', 21),
+('Bob', 22),
+('Charlie', 20);
+
+INSERT INTO student_profiles (student_id, email, phone) VALUES
+(1, 'alice@example.com', '123-456'),
+(2, 'bob@example.com', '234-567'),
+(3, 'charlie@example.com', '345-678');
+
+INSERT INTO courses (course_name) VALUES
+('Math'),
+('Physics'),
+('Computer Science');
+
+INSERT INTO student_courses (student_id, course_id) VALUES
+(1, 1), -- Alice на Math
+(1, 3), -- Alice на Computer Science
+(2, 1), -- Bob на Math
+(2, 2), -- Bob на Physics
+(3, 2), -- Charlie на Physics
+(3, 3); -- Charlie на Computer Science
+
+-- ========================================
+-- 6. Примеры запросов
+-- ========================================
+
+-- Получить всех студентов с их профилями
+SELECT s.id, s.name, s.age, p.email, p.phone
+FROM students s
+LEFT JOIN student_profiles p ON s.id = p.student_id;
+
+-- Получить список студентов и курсов (Many-to-Many)
+SELECT s.name AS student, c.course_name AS course
+FROM students s
+JOIN student_courses sc ON s.id = sc.student_id
+JOIN courses c ON sc.course_id = c.id
+ORDER BY s.id;
+
+-- Найти всех студентов, которые записаны на курс "Math"
+SELECT s.name
+FROM students s
+JOIN student_courses sc ON s.id = sc.student_id
+JOIN courses c ON sc.course_id = c.id
+WHERE c.course_name = 'Math';
 
 
 ---------------------------------------------------------

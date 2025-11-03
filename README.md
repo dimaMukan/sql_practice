@@ -1,0 +1,2 @@
+- Practicing SQL
+- Working with GitHub and SQL

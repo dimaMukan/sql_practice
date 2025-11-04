@@ -135,15 +135,54 @@ FROM (SELECT e.city, avg(e.salary) as total_sal
 WHERE temp.total_sal >= (SELECT avg(salary) FROM employee)
 ORDER BY temp.total_sal DESC;
 
-SELECT name
-FROM employee;
-
-SELECT name
-FROM employee;
-
-
-
--- 🟣 УРОВЕНЬ 4 — Сложные и аналитические
 -- Вывести сотрудников, у которых зарплата ниже средней по городу, но выше средней по отделу.
+SELECT temp.avg_dep, temp.avg_city, salary, city
+FROM (SELECT e.city, e.salary, avg(e.salary) over (partition by e.city) avg_city,  avg(e.salary) over (partition by e.department) as avg_dep
+      FROM employee e
+      ) temp
+WHERE temp.avg_city > salary and salary > temp.avg_dep;
+
+--Найди сотрудников, чья зарплата выше средней по их должности (position), но ниже средней по всему городу, где они работают.
+SELECT name, city, department, salary, temp.avg_city, temp.avg_dep,
+       row_number() over (partition by department order by salary DESC ) as rank
+FROM (SELECT e.salary, e.city, e.department, e.name,
+             avg(e.salary) over (partition by e.department) as avg_dep,
+             avg(e.salary) over (partition by e.city) as avg_city
+      FROM employee e) as temp
+WHERE salary > avg_dep and salary < avg_city;
+
+
+-- Определить, сотрудников из каждого отдела было нанято после 2020 года.
+SELECT department, name, starting_date,
+                    row_number() over (partition by department order by starting_date) as rank
+-- FROM (SELECT e.name, e.department, e.starting_date
+--       FROM employee e ) as temp
+FROM employee
+WHERE starting_date > '2020-01-01';
+
 -- Определить, сколько сотрудников из каждого отдела было нанято после 2020 года.
+SELECT department, max(rank)
+FROM (SELECT e.name, e.department, e.starting_date,
+             row_number() over (partition by department order by starting_date) as rank
+      FROM employee e
+      WHERE starting_date > '2020-01-01') as temp
+GROUP BY department
+ORDER BY max(rank);
+
+
+-- Определить, сколько сотрудников из каждого отдела было нанято после 2020 года.
+SELECT DISTINCT department, rank
+FROM (SELECT e.name, e.department, e.starting_date,
+             count(*) over (partition by department) as rank
+      FROM employee e
+      WHERE starting_date > '2020-01-01') as temp;
+
 -- Для каждого города показать, какой отдел в нём платит в среднем больше всех.
+SELECT city, temp.avg_sal, department
+FROM(SELECT e.city,e.department,e.name,
+            avg(e.salary) over (partition by e.city,e.department) as avg_sal,
+            rank() over (partition by e.city order by e.salary DESC) as rank
+FROM employee e) temp
+WHERE temp.rank = 1;
+
+

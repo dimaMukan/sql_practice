@@ -186,3 +186,24 @@ FROM employee e) temp
 WHERE temp.rank = 1;
 
 
+-- Для каждого города определить,
+-- в каком отделе работает самый высокооплачиваемый сотрудник,
+-- и показать среднюю зарплату этого отдела в этом городе.
+
+SELECT  name,city,department, temp.max_city, avg(salary) over (partition by city,department) as avg_per_city
+FROM (SELECT e.name,e.city, e.department,e.salary, max(e.salary) over (partition by e.city) as max_city
+      FROM employee e) temp
+WHERE salary = temp.max_city
+ORDER BY temp.max_city DESC
+
+
+
+
+
+
+
+
+
+
+
+

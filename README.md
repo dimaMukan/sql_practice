@@ -1,2 +1,2 @@
 - Practicing SQL
-- Working with GitHub and SQL
+- Working with GitHub and SQL + Python

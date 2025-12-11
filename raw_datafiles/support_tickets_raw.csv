@@ -1,0 +1,4 @@
+TicketID,CustomerID,OrderID,IssueCategory,Message,CreatedAt
+9001,1,5001,Delivery,"Package arrived damaged",2024-11-12
+9002,3,5002,Product,"Vacuum cleaner makes weird noise",2024-11-13
+9003,1,5005,Payment,"Cash payment not confirmed",2024-11-21

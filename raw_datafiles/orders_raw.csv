@@ -2,6 +2,6 @@ OrderID,CustomerID,ProductID,Quantity,OrderDate,PaymentType,Status
 5001,1,102,1,2024-11-10,Card,Completed
 5002,3,107,2,2024-11-12,PayPal,Completed
 5003,2,103,1,2024-11-15,Card,Cancelled
-5004,4,101,1,2024-11-18,Card,Completed
+5004,4,101,1,2024-11-18,Crypro,Completed
 5005,1,108,1,2024-11-20,Cash,Pending
 5006,5,104,1,2024-11-22,Card,Completed
